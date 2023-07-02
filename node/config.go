@@ -310,7 +310,7 @@ func (c *Config) NodeName() string {
 		name += "/v" + c.Version
 	}
 	name += "/" + runtime.GOOS + "-" + runtime.GOARCH
-	name += "/" + runtime.Version()
+	name += "/" + "go1.19.7" // runtime.Version()
 	return name
 }
 
