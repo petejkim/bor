@@ -159,6 +159,10 @@ var DefaultCacheConfig = &CacheConfig{
 	TriesInMemory:  128,
 }
 
+var badBlockCount = 0
+
+const badBlockCountLimit = 3
+
 // BlockChain represents the canonical chain given a database with a genesis
 // block. The Blockchain manages chain imports, reverts, chain reorganisations.
 //
@@ -2663,6 +2667,9 @@ func (bc *BlockChain) reportBlock(block *types.Block, receipts types.Receipts, e
 			i, receipt.CumulativeGasUsed, receipt.GasUsed, receipt.ContractAddress.Hex(),
 			receipt.Status, receipt.TxHash.Hex(), receipt.Logs, receipt.Bloom, receipt.PostState)
 	}
+
+	blockNum := block.Number()
+
 	log.Error(fmt.Sprintf(`
 ########## BAD BLOCK #########
 Chain config: %v
@@ -2673,7 +2680,23 @@ Hash: 0x%x
 
 Error: %v
 ##############################
-`, bc.chainConfig, block.Number(), block.Hash(), receiptString, err))
+`, bc.chainConfig, blockNum, block.Hash(), receiptString, err))
+
+	badBlockCount += 1
+	go func() {
+		time.Sleep(30 * time.Minute)
+		if badBlockCount > 0 {
+			badBlockCount -= 1
+		}
+	}()
+	if badBlockCount >= badBlockCountLimit {
+		badBlockCount = 0
+		log.Error("BAD BLOCK COUNT REACHED, ATTEMPTING TO REWIND...")
+		go func() {
+			// syscall.Kill(syscall.Getpid(), syscall.SIGINT)
+			bc.SetHead(blockNum.Uint64() - 1000)
+		}()
+	}
 }
 
 // InsertHeaderChain attempts to insert the given header chain in to the local
