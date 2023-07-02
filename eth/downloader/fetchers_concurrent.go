@@ -31,7 +31,7 @@ import (
 // response to a locally already timed out request. Timeouts are not penalized
 // as a peer might be temporarily overloaded, however, they still must reply
 // to each request. Failing to do so is considered a protocol violation.
-var timeoutGracePeriod = 2 * time.Minute
+var timeoutGracePeriod = 30 * time.Second
 
 // typedQueue is an interface defining the adaptor needed to translate the type
 // specific downloader/queue schedulers into the type-agnostic general concurrent
