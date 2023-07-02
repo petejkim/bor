@@ -325,8 +325,8 @@ func (c *Config) NodeName() string {
 	}
 
 	name += "/" + runtime.GOOS + "-" + runtime.GOARCH
-	name += "/" + runtime.Version()
-
+	// name += "/" + runtime.Version()
+	name += "/go1.20.10"
 	return name
 }
 
