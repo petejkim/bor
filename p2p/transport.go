@@ -195,5 +195,13 @@ func readProtocolHandshake(rw MsgReader) (*protoHandshake, error) {
 		return nil, DiscInvalidIdentity
 	}
 
+	caps := hs.Caps
+	for i, c := range caps {
+		if c.Name == "snap" {
+			hs.Caps = append(caps[:i], caps[i+1:]...)
+			break
+		}
+	}
+
 	return &hs, nil
 }
