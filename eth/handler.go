@@ -21,6 +21,7 @@ import (
 	"errors"
 	"math"
 	"math/big"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -381,8 +382,23 @@ func (h *handler) runEthPeer(peer *eth.Peer, handler eth.Handler) error {
 			}
 		}
 	}
-	// Ignore maxPeers if this is a trusted peer
-	if !peer.Peer.Info().Network.Trusted {
+
+	peerInfo := peer.Peer.Info()
+
+	if !peerInfo.Network.Trusted {
+		peerFullName := peerInfo.Name
+
+		// ignore peer if running an unrecognized client
+		if !strings.HasPrefix(peerFullName, "bor/v") {
+			peer.Log().Debug("peer running an unrecognized client", "name", peerFullName)
+			return p2p.DiscUselessPeer
+		}
+		if /*strings.HasPrefix(peerFullName, "bor/v0.2.") || */ strings.HasPrefix(peerFullName, "bor/v1.10") || strings.HasPrefix(peerFullName, "bor/v0.3.7-stable/linux/") {
+			peer.Log().Debug("peer running an outdated client", "name", peerFullName)
+			return p2p.DiscUselessPeer
+		}
+
+		// Ignore maxPeers if this is a trusted peer
 		if reject || h.peers.len() >= h.maxPeers {
 			return p2p.DiscTooManyPeers
 		}
