@@ -581,7 +581,11 @@ func (srv *Server) setupLocalNode() error {
 
 	srv.ourHandshake = &protoHandshake{Version: baseProtocolVersion, Name: srv.Name, ID: pubkey[1:]}
 	for _, p := range srv.Protocols {
-		srv.ourHandshake.Caps = append(srv.ourHandshake.Caps, p.cap())
+		if p.Name == "snap" {
+			srv.log.Info("excluding snap protocol from caps")
+		} else {
+			srv.ourHandshake.Caps = append(srv.ourHandshake.Caps, p.cap())
+		}
 	}
 	slices.SortFunc(srv.ourHandshake.Caps, Cap.Cmp)
 
