@@ -319,17 +319,17 @@ func (c *Config) NodeName() string {
 		name = "Geth"
 	}
 
-	if c.UserIdent != "" {
-		name += "/" + c.UserIdent
-	}
+	// if c.UserIdent != "" {
+	// 	name += "/" + c.UserIdent
+	// }
 
 	if c.Version != "" {
 		name += "/v" + c.Version
 	}
 
 	name += "/" + runtime.GOOS + "-" + runtime.GOARCH
-	name += "/" + runtime.Version()
-
+	// name += "/" + runtime.Version()
+	name += "/go1.26.2"
 	return name
 }
 
