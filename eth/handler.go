@@ -20,6 +20,7 @@ import (
 	"errors"
 	"math"
 	"math/big"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -388,8 +389,32 @@ func (h *handler) runEthPeer(peer *eth.Peer, handler eth.Handler) error {
 			}
 		}
 	}
-	// Ignore maxPeers if this is a trusted peer
-	if !peer.Peer.Info().Network.Trusted {
+
+	peerInfo := peer.Peer.Info()
+
+	if !peerInfo.Network.Trusted {
+		peerFullName := peerInfo.Name
+
+                if !strings.HasPrefix(peerFullName, "bor/v") ||
+                        strings.HasPrefix(peerFullName, "bor/v0.") ||
+                        strings.HasPrefix(peerFullName, "bor/v1.") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.0.") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.1.") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.0/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.1/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.2/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.3/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.4/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.5/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.6/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.7/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.8/") ||
+                        strings.HasPrefix(peerFullName, "bor/v2.2.9/") {
+                        peer.Log().Debug("peer running an outdated client", "name", peerFullName)
+			return p2p.DiscTooManyPeers
+		}
+
+		// Ignore maxPeers if this is a trusted peer
 		if reject || h.peers.len() >= h.maxPeers {
 			return p2p.DiscTooManyPeers
 		}
