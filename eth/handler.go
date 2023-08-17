@@ -649,7 +649,7 @@ func (h *handler) BroadcastTransactions(txs types.Transactions) {
 		case tx.Size() > txMaxBroadcastSize:
 			largeTxs++
 		default:
-			maybeDirect = true
+			// maybeDirect = true
 		}
 		// Send the transaction (if it's small enough) directly to a subset of
 		// the peers that have not received it yet, ensuring that the flow of
