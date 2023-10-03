@@ -252,7 +252,7 @@ func FetchWithRetry[T any](ctx context.Context, client http.Client, url *url.URL
 	// attempt counter
 	attempt := 1
 
-	log.Warn("an error while trying fetching from Heimdall", "path", url.Path, "attempt", attempt, "error", err)
+	log.Debug("an error while trying fetching from Heimdall", "path", url.Path, "attempt", attempt, "error", err)
 
 	// create a new ticker for retrying the request
 	var ticker *time.Ticker
@@ -268,7 +268,7 @@ func FetchWithRetry[T any](ctx context.Context, client http.Client, url *url.URL
 
 retryLoop:
 	for {
-		log.Info("Retrying again in 5 seconds to fetch data from Heimdall", "path", url.Path, "attempt", attempt)
+		log.Debug("Retrying again in 5 seconds to fetch data from Heimdall", "path", url.Path, "attempt", attempt)
 
 		attempt++
 
@@ -292,7 +292,7 @@ retryLoop:
 
 			if err != nil {
 				if attempt%logEach == 0 {
-					log.Warn("an error while trying fetching from Heimdall", "path", url.Path, "attempt", attempt, "error", err)
+					log.Debug("an error while trying fetching from Heimdall", "path", url.Path, "attempt", attempt, "error", err)
 				}
 
 				continue retryLoop
