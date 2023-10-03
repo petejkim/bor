@@ -64,7 +64,7 @@ func (h *ethHandler) fetchWhitelistMilestone(ctx context.Context, bor *bor.Bor, 
 	// fetch latest milestone
 	milestone, err := bor.HeimdallClient.FetchMilestone(ctx)
 	if err != nil {
-		log.Error("Failed to fetch latest milestone for whitelisting", "err", err)
+		log.Debug("Failed to fetch latest milestone for whitelisting", "err", err)
 		return num, hash, errMilestone
 	}
 
