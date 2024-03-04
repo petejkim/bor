@@ -406,7 +406,7 @@ func (h *handler) runEthPeer(peer *eth.Peer, handler eth.Handler) error {
 			peer.Log().Debug("peer running an unrecognized client", "name", peerFullName)
 			return p2p.DiscUselessPeer
 		}
-		if /*strings.HasPrefix(peerFullName, "bor/v0.2.") || */ strings.HasPrefix(peerFullName, "bor/v1.10") || strings.HasPrefix(peerFullName, "bor/v0.3.7-stable/linux/") {
+		if /*strings.HasPrefix(peerFullName, "bor/v0.2.") || */ strings.HasPrefix(peerFullName, "bor/v1.0.") || strings.HasPrefix(peerFullName, "bor/v1.10") || strings.HasPrefix(peerFullName, "bor/v0.3.7-stable/linux/") {
 			peer.Log().Debug("peer running an outdated client", "name", peerFullName)
 			return p2p.DiscUselessPeer
 		}
