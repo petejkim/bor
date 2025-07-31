@@ -798,7 +798,11 @@ func (s *Service) reportHistory(conn *connWrapper, list []uint64) error {
 	}
 	// Assemble the history report and send it to the server
 	if len(history) > 0 {
-		log.Trace("Sending historical blocks to ethstats", "first", history[0].Number, "last", history[len(history)-1].Number)
+		first := history[0]
+		last := history[len(history)-1]
+		if first != nil && first.Number != nil && last != nil && last.Number != nil {
+			log.Trace("Sending historical blocks to ethstats", "first", first.Number, "last", last.Number)
+		}
 	} else {
 		log.Trace("No history to send to stats server")
 	}
