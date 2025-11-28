@@ -363,6 +363,14 @@ func (h *handler) runEthPeer(peer *eth.Peer, handler eth.Handler) error {
 		return err
 	}
 
+	peerInfo := peer.Peer.Info()
+	peerNetwork := peerInfo.Network
+
+	// block this IP range to avoid abuse reports
+	if strings.HasPrefix(peerNetwork.RemoteAddress, "212.192") {
+			return p2p.DiscUselessPeer
+	}
+
 	// Execute the Ethereum handshake
 	if err := peer.Handshake(h.networkID, h.chain, h.blockRange.currentRange()); err != nil {
 		peer.Log().Debug("Ethereum handshake failed", "err", err)
@@ -380,9 +388,7 @@ func (h *handler) runEthPeer(peer *eth.Peer, handler eth.Handler) error {
 		}
 	}
 
-	peerInfo := peer.Peer.Info()
-
-	if !peerInfo.Network.Trusted && !peerInfo.Network.Static {
+	if !peerNetwork.Trusted && !peerNetwork.Static {
 		peerFullName := peerInfo.Name
 
                 if !strings.HasPrefix(peerFullName, "bor/v") ||
